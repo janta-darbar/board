@@ -5,7 +5,7 @@
     width:666px;
     height:500px;
     /*background:url(../images/body_bg.png) repeat-x;*/
-    padding:10px 15px 10px 15px;
+    padding:0;
     font-family: Arial;
     color: #333;
     font-size: 12px;
@@ -16,8 +16,20 @@
     user-select: none;
     clear:both;
 }
-#elex_gameContainer p {
-	color:#333;
+#cam_bttn {
+    width:666px;
+    height:500px;
+    /*background:url(../images/body_bg.png) repeat-x;*/
+    padding:0;
+    font-family: Arial;
+    color: #333;
+    font-size: 12px;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+    clear:both;
 }
 #elex_gameContainer ul, #elex_gameContainer li, #elex_gameContainer a {
 	font-family: Arial;
@@ -25,6 +37,10 @@
     padding: 0;
     text-decoration: none;
     color: #333;
+    font-size:12px;
+}
+#elex_gameContainer a {
+	font-size:12px;
 }
 #elex_gameContainer div {
 	font-family: Arial;
@@ -36,7 +52,9 @@
 }
 
 #elex_gameContainer .headerPanel {
-    margin: 0 0 24px 0;
+    /*margin: 0 0 24px 0;*/
+    margin: 0 0 10px 0;
+	padding-bottom: 14px;
 }
 
 #elex_gameContainer .headerPanel .yourTurn {
@@ -47,7 +65,7 @@
     -webkit-border-radius: 2px;
     border-radius: 2px;
     behavior: url(../images/PIE.htc);
-    /*text-shadow: 1px 1px 1px rgba(33, 36, 38, 0.5);*/
+    text-shadow: 1px 1px 1px rgba(33, 36, 38, 0.5);
     text-align: center;
     color: #fff;
     font-weight: bold;
@@ -178,7 +196,7 @@
     color:#222;
     /*font-weight:bold;*/
     text-decoration:none; 
-    padding:1px 0 0 0;
+    padding:2px 0 0 0;
 }
 #elex_gameContainer .tilePlayed {
     color:#000;
@@ -193,9 +211,9 @@
     position: absolute;
     cursor:pointer;
 }
-#elex_gameContainer .tilePlayedKey {font-size:20px;color:#222;/*font-weight:bold;*/text-decoration:none;padding:1px 0 0 0;}
+#elex_gameContainer .tilePlayedKey {font-size:20px;color:#222;/*font-weight:bold;*/text-decoration:none;padding:2px 0 0 0;}
 #elex_gameContainer .tileLastPlayed {color:#fff;width:26px;height:26px;border:1px solid #008707;background:#22b129;/*letter-spacing:-1px;*/text-align:center;cursor:pointer;position:absolute;}
-#elex_gameContainer .tileLastPlayedKey {font-size:20px;/*font-weight:bold;*/text-decoration:none;padding:1px 0 0 0;}
+#elex_gameContainer .tileLastPlayedKey {font-size:20px;/*font-weight:bold;*/text-decoration:none;padding:2px 0 0 0;}
 #elex_gameContainer .tileValue {font-size:10px;text-decoration:none;vertical-align:bottom;float:right;padding-top:13px;}
 #elex_gameContainer .leftPanel .actionPanel .rightActionPanel {float: right;width:84px;}
 #elex_gameContainer .rightPanel {float: right; width: 207px;}
@@ -621,7 +639,6 @@
     behavior: url(../images/PIE.htc);
     height: 25px;
     padding: 8px 0 0 8px;
-    margin:0;
 }
 
 #elex_gameContainer .rightPanel .combinedPanel .heading a {
@@ -644,13 +661,13 @@
     -webkit-border-radius: 4px 4px 0px 0px;
     border-radius: 4px 4px 0px 0px;
     behavior: url(../images/PIE.htc);
-    padding: 5px 10px;
+    padding: 5px 7px;
     cursor: pointer;
 }
 
 #elex_gameContainer .rightPanel .combinedPanel .heading .menuInactive {
     color: #0066cc;
-    padding: 5px 11px 0 11px;
+    padding: 5px 7px 0 7px;
     cursor: pointer;
 }
 
@@ -681,9 +698,15 @@
     padding: 3px;
 }
 
-#elex_gameContainer .rightPanel .combinedPanel .body .chatPanel .chatInput .inputBox
+#elex_gameContainer .rightPanel .combinedPanel .body .chatPanel .chatInput
 {
-    width: 150px;
+    width: 198px;
+    height: 18px;
+    border: none;
+    background: #fff;
+}
+#elex_gameContainer .inputBox{
+	width: 132px;
     height: 18px;
     border: none;
     background: #fff;
@@ -757,6 +780,10 @@
 
 #elex_gameContainer .rightPanel .combinedPanel .body .chatPanel .chatBody .chatDate {
     color: #777;
+}
+
+#elex_gameContainer .rightPanel .combinedPanel .body .chatPanel .chatInput .chatCamera {
+    cursor: pointer;
 }
 
 #elex_gameContainer .rightPanel .combinedPanel .body .chatPanel .chatBody .opponentChatIcon1
@@ -930,7 +957,6 @@
 #elex_gameContainer .rightPanel .combinedPanel .body .dicPanel .dicSlot p {
     font-size: 11px;
     margin-top: 5px;
-    margin-bottom: 11px;
 }
 
 #elex_gameContainer .rightPanel .combinedPanel .body .dicPanel .dicSlot .wordCheck {
@@ -1323,7 +1349,7 @@
     border-radius:5px;
     background:#fff;
     width:250px;
-    height:auto;
+    height:auto;/*310px;*/
     behavior: url(../images/PIE.htc);
     position:absolute;
     z-index:9999;
@@ -1517,7 +1543,7 @@
     background: #21bbda url(../images/sprite_21082012.png) no-repeat -23px -116px;width:22px;height:18px;
 }
 #elex_gameContainer #examinePopup .body .next {
-    background: #21bbda url(../images/sprite_21082012.png) no-repeat 0 -116px;width:22px;height:18px;margin-top:0;
+    background: #21bbda url(../images/sprite_21082012.png) no-repeat 0 -116px;width:22px;height:18px;margin:0 5px 0 0; //mayur
 }
 #elex_gameContainer #examinePopup .body .first {
     background: #21bbda url(../images/sprite_21082012.png) no-repeat -46px -116px;width:22px;height:18px;
@@ -1784,3 +1810,170 @@
 .chatScroll {margin-top:20px; height: 163px; overflow-y: scroll;color:#333;}
 .chatScroll .newword {color: #ff6b08;font-weight: bold;line-height: 20px;padding:0 10px 16px 16px;text-decoration: none;}
 .chatScroll .newword:hover {color: #009cda;text-decoration: underline;}
+
+
+
+/*-------------popup analyse game over-------------*/
+.game_over_wrapper{width:300px;height:302px;margin:0 auto;background-color:#fff;-moz-box-shadow:0px 0px 3px rgba(82,82,82,0.5);-webkit-box-shadow:0px 0px 3px rgba(82,82,82,0.5);box-shadow:0px 0px 3px rgba(82,82,82,0.5);position:absolute;}
+.game_over_wrapper2{position:relative;left:22px;top:8px;}
+.go_heading{font-size:18px;color:#444;font-weight:700;position:relative;}
+.game_over_wrapper2 p{font-size:14px;font-weight:300;width:240px;position:relative;bottom:9px;}
+.new{font-size:9px;font-weight:600;color:#fff;text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);width:32px;height:12px;-webkit-border-radius:2px;-moz-border-radius: 2px;
+border-radius: 2px;background-color:#00a256;text-align:center;position:relative;left:78px;top:1px;}
+
+
+
+/*-------------chat_msg_img--------------------*/
+#img_upload_send{
+	width: 36px;
+    height: 18px;
+    line-height: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color:#444;
+    font-size:11px;
+    font-weight:bold;
+    background:#fbfbfb;
+    text-decoration:none;
+    border:1px solid #e1e1e1;
+    text-align:center;
+    text-shadow:0 1px rgba(0, 0, 0, 0.1);
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fefefe', endColorstr='#fbfbfb');
+    background: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#fbfbfb));
+    background: -moz-linear-gradient(top,  #fefefe,  #fbfbfb);
+}
+
+.ChatImgPopUPWrapper{
+	z-index:10000;color: #333;font-size:12px;font-family: Arial;line-height: normal;
+	position:absolute;top:50%;left:40%;margin-top:0px;margin-left:0px;width:320px;
+	height:250px;
+	-webkit-box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 1);box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 1);
+	border: 1px solid #aaaaaa;border-radius: 5px;
+}
+.chatPopUpContainer{
+	background: #fff;width: 320px;height:250px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px
+}
+.chatPopUpHeader{
+	text-align:center;background: #eaeaea;height: 24px;font-size:18px;
+	color: #000;padding: 8px;-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;border-radius: 5px 5px 0 0;
+	cursor: pointer;
+}
+
+.chatPopUpBody{
+	background: #fff;height: 154px;font-size: 12px;color: #555;padding: 8px;line-height: 18px;
+}
+.chatPopUpFooter{
+	background: #eaeaea;height: 20px;padding: 10px;width: 300px;-moz-border-radius: 0 0 5px 5px;-webkit-border-radius: 0 0 5px 5px;border-radius: 0 0 5px 5px;margin: 0;
+}
+
+#chatPopUpFooter .buttonChat{
+	background: #2381dc;
+	border: 1px solid #17538e;
+	progid: DXImageTransform.Microsoft.gradient(startColorstr='#2381dc', endColorstr='#1472cd');
+	background: -webkit-gradient(linear, left top, left bottom, from(#2381dc), to(#1472cd));
+	background: -moz-linear-gradient(top, #2381dc, #1472cd);
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-khtml-border-radius: 2px;
+	border-radius: 2px;
+	behavior: url(../images/PIE.htc);
+	filter: dropshadow(color=#1a3041,offX=0,offY=-1);
+	text-shadow: 0 1px 1px rgba(26, 48, 65, 0.5);
+	margin: 0 10px 0 35px;
+	padding: 1px 3px 1px 3px;
+	line-height: 18px;
+	cursor: pointer;
+}
+
+#chatPopUpFooter .buttonChat:hover{
+	background:#1aa7d3;
+}
+#chatPopUpFooter a {
+	float: left;
+	/*width: 73px;*/
+	height: 18px;
+	display: block;
+	color: #fff;
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	line-height: 16px;
+}
+
+
+
+
+/*###### superlex ##########*/
+#elex_bodyPanel .optionMenu {
+    width: 205px;
+    height: 31px;
+    line-height: 30px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    /*-moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    behavior: url(../images/PIE.htc);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2381dc',endColorstr='#1370cc' );
+    background: -webkit-gradient(linear, left top, left bottom, from(#2381dc), to(#1370cc));
+    background: -moz-linear-gradient(top,  #2381dc,  #1370cc);
+    text-shadow: 0 1px 1px rgba(33, 36, 38, 0.5);
+    border: 1px solid #17538e;*/
+    cursor:pointer;
+    
+    background:#4c8ffd;
+    border:1px solid #3079ed;
+    text-align:center;
+    text-shadow:0 1px rgba(0, 0, 0, 0.1);
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+    behavior:url(../images/PIE.htc);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c8ffd', endColorstr='#4787ed');
+    background: -webkit-gradient(linear, left top, left bottom, from(#4c8ffd), to(#4787ed));
+    background: -moz-linear-gradient(top,  #4c8ffd,  #4787ed);
+}
+#elex_bodyPanel .optionMenuOver {
+    /*background:#0ea9dc;*/
+   border:1px solid #2f5bb7;
+   -moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.2);
+   -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.2);
+   box-shadow:0 1px 2px rgba(0, 0, 0, 0.2);
+   behavior:url(../images/PIE.htc);
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4c8ffd', endColorstr='#357ae8');
+   background: -webkit-gradient(linear, left top, left bottom, from(#4c8ffd), to(#357ae8));
+   background: -moz-linear-gradient(top,  #4c8ffd,  #357ae8);
+}
+#elex_bodyPanel .caption {
+    padding-left:43px;
+    float:left;
+}
+#elex_bodyPanel .backIcon {
+    float:left;
+    background:url(../images/sprite_21082012.png) no-repeat -150px -116px;
+    width:14px;
+    height:14px;
+    display:block;
+    margin:9px 0 0 6px;
+}
+#elex_bodyPanel .backIconOver {
+    margin:9px 0 0 6px;
+    float:left;
+    background:url(../images/sprite_21082012.png) no-repeat -150px -116px;
+    width:14px;
+    height:14px;
+    display:block;
+    -webkit-transform: rotate(30deg);
+    -moz-transform: rotate(30deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.3 );
+}
+/* ########superlex ends######## */
