@@ -5,7 +5,7 @@
     width:666px;
     height:500px;
     /*background:url(../images/body_bg.png) repeat-x;*/
-    padding:10px 15px 10px 15px;
+    padding:0;
     font-family: Arial;
     color: #333;
     font-size: 12px;
@@ -930,7 +930,6 @@
 #elex_gameContainer .rightPanel .combinedPanel .body .dicPanel .dicSlot p {
     font-size: 11px;
     margin-top: 5px;
-    margin-bottom: 11px;
 }
 
 #elex_gameContainer .rightPanel .combinedPanel .body .dicPanel .dicSlot .wordCheck {
@@ -1517,7 +1516,7 @@
     background: #21bbda url(../images/sprite_21082012.png) no-repeat -23px -116px;width:22px;height:18px;
 }
 #elex_gameContainer #examinePopup .body .next {
-    background: #21bbda url(../images/sprite_21082012.png) no-repeat 0 -116px;width:22px;height:18px;margin-top:0;
+    background: #21bbda url(../images/sprite_21082012.png) no-repeat 0 -116px;width:22px;height:18px;margin:0 5px 0 0; //mayur
 }
 #elex_gameContainer #examinePopup .body .first {
     background: #21bbda url(../images/sprite_21082012.png) no-repeat -46px -116px;width:22px;height:18px;
