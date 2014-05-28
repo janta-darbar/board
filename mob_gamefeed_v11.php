@@ -9,8 +9,8 @@ include_once("fbapi/facebook.php");
 //include_once("game_file_functions.php");////////////////done
 include_once("fbapi/jsonwrapper/jsonwrapper.php");
 
-//include_once ("../amazon/dynamodb_sdk-1.5.3/sdk.class.php");/////////////added
-include_once ("/var/www/html/aws-sdk/include.php");///////////added
+include_once ("../amazon/dynamodb_sdk-1.5.3/sdk.class.php");/////////////added
+// include_once ("/var/www/html/aws-sdk/include.php");///////////added
 //amazon implementation
 include_once ("FileIOModel.php");////////////added
 $FileIO = new FileIOModel();//////////////added
@@ -380,6 +380,14 @@ if ($cnt > 0)
 				$msgcontent["m{$x}"] = "{$x}~!~{$row[dt]}~!~{$row['player']}~!~" . urldecode(htmlentities($row['message']));
 			}
 		}*/
+		$result = mysql_query("SELECT msgid, player, message, DATE_FORMAT(datetime, '%d-%b-%y %H:%i GMT') as dt FROM `$messages_table$gameOverSuffix` where `game_id`='$gid' order by msgid");
+		if(mysql_num_rows($result)>0){
+			while($row =mysql_fetch_assoc($result)){
+				$x++;
+				$msgcontent["m{$x}"] = "{$x}~!~{$row[dt]}~!~{$row['player']}~!~" . urldecode(htmlentities($row['message']));
+			}
+
+		}
 	}
 	$msgcontent['cnt'] = (string)$x;
 	$content['messages'] = $msgcontent;
@@ -647,12 +655,12 @@ if ($cnt > 0)
 	$content = array("check"=>"Failure", "message" => "This game is not available.");
 }
 
-/*if($_REQUEST['callback']) {//////#2481
+if($_REQUEST['callback']) {//////#2481
 	echo $_REQUEST['callback']."(".json_encode($content).")";
 }else{
 	echo json_encode($content);
-}*/
-echo json_encode($content);
+}
+//echo json_encode($content);
 // close memcache before ending
 //if($memcache)-------#1270
 //	$memcache->close();
