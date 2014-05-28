@@ -29,6 +29,7 @@ var AppConstants = {
         paymentSuccess: "2",
         protocol: "",
         hideAdvert: "",
+        isCustomBoard: false,
         urlContactMail: "http://www.lexulous.com/sendContactMail.php",
         urlMoveMail: "http://www.lexulous.com/ajax/sendmoveemail",
         urlInnerDicSearch: "http://aws.rjs.in/fblexulous/dictionary/",
@@ -282,7 +283,10 @@ var RequestController = {
                     fb_sig_session_key: AppConstants.variables.gameAuthSecret,
                     gid: AppConstants.variables.gameId,
                     pid: AppConstants.variables.gamePid,
-                    password: AppConstants.variables.gamePassword
+                    password: AppConstants.variables.gamePassword,
+                    action:action,
+                    showGameOver:AppConstants.variables.showGameOver,
+                    mobileRequest:mobileRequest
                 };
                 if (AppConstants.variables.showGameOver == 1) {
                     obj.showGameOver = 1;
@@ -666,7 +670,8 @@ var GameController = {
         MovesModel.init({
             movesInfo: FeedDataModel.movesInfo
         });
-        TileModel.init();
+        // TileModel.init();
+        TileModel.init({ tileString : FeedDataModel.tileString });
         BoardModel.init({
             nodeString: FeedDataModel.nodeString
         });
@@ -789,6 +794,7 @@ var GameController = {
         case "CHALLENGE":
             if (data.check == "Failure") {
                 ActivityIndicator.show(data.message, true);
+                this.reload();
                 $(document).trigger("lexGameboardChallengeFailure", []);
             } else {
                 this.reload();
@@ -1031,6 +1037,8 @@ var FeedDataModel = {
     cellWeightString: "",
     rating: {},
     msgSpecsArr: null,
+    boardLayout : null,
+    tileLeft : null,
     init: function (obj) {
         var pid = 1;
         var index = 0;
@@ -1114,6 +1122,9 @@ var FeedDataModel = {
         this.cellWeightString = obj.gameinfo.boarddes;
         this.tileString = obj.gameinfo.tilevalues;
         this.msgSpecsArr = obj.msgSpecs;
+
+        this.boardLayout = obj.gameinfo.boarddes;        
+        this.tileLeft = obj.gameinfo.tile_count;
     }
 };
 var Base64 = {
@@ -1222,36 +1233,96 @@ var ErrorModel = {
 };
 var BoardModel = {
     boardObject: null,
-    cellWeightString: "RWWLWWWRWWWLWWRWWPWWWLWLWWWPWWWPWWWBWWWBWWWPWLWWWPWWWWWPWWWLWWWPWWWWWWWPWWWWWBWWWLWLWWWBWWWLWWWLWWWLWWWLWRWWWWWWWWWWWWWRWLWWWLWWWLWWWLWWWBWWWLWLWWWBWWWWWPWWWWWWWPWWWLWWWPWWWWWPWWWLWPWWWBWWWBWWWPWWWPWWWLWLWWWPWWRWWLWWWRWWWLWWR",
-    cellWeightObject: {
-        R: {
-            color: "#d22323",
-            caption: "3W"
-        },
-        P: {
-            color: "#ffa0a0",
-            caption: "2W"
-        },
-        B: {
-            color: "#3264c8",
-            caption: "3L"
-        },
-        L: {
-            color: "#a0d3ff",
-            caption: "2L"
-        },
-        G: {
-            color: "#dcbf25",
-            caption: "4W"
-        },
-        W: {
-            color: "",
-            caption: ""
-        }
-    },
+    cellWeightString: "WWWGWWWWWWWGWWWWWRWWWBWBWWWRWWWRWWWLWWWLWWWRWGWWWPWWWWWPWWWGWWWPWWWWWWWPWWWWWLWWWLWLWWWLWWWBWWWLWWWLWWWBWWWWWWWWWWWWWWWWWBWWWLWWWLWWWBWWWLWWWLWLWWWLWWWWWPWWWWWWWPWWWGWWWPWWWWWPWWWGWRWWWLWWWLWWWRWWWRWWWBWBWWWRWWWWWGWWWWWWWGWWW",
+    cellWeightObject: null,
     nodeString: "",
     nodeObject: null,
     init: function (obj) {
+
+        if(this.cellWeightString!=FeedDataModel.boardLayout){   //custom board
+            AppConstants.variables.isCustomBoard = true;
+            this.cellWeightString = FeedDataModel.boardLayout;
+            var tempString = '';
+            var cellWeightStrSplit = this.cellWeightString.split("",225);
+            for(var i=0;i<15;i++){
+                var  k = 0;
+                for(var j=0;j<15;j++){
+                    tempString += cellWeightStrSplit[i+k];
+                    k += 15;
+                }
+            }           
+            this.cellWeightString = tempString;
+            
+            this.cellWeightObject = {
+                    R : {
+                        color : "#bf0000",
+                        caption : "3W"
+                    },
+                    P : {
+                        color : "#f0a6ac",
+                        caption : "2W"
+                    },
+                    B : {
+                        color : "#205abb",
+                        caption : "3L"
+                    },
+                    L : {
+                        color : "#a6c5f1",
+                        caption : "2L"
+                    },
+                    G : {
+                        color : "#bf9f00",
+                        caption : "4W"
+                    },
+                    W : {
+                        color : "",
+                        caption : ""
+                    },
+                    F : {
+                        color : "#d1bb4c",
+                        caption : "4L"
+                    },
+                    H : {
+                        color : "#66d966",
+                        caption : "5L"
+                    },
+                    I : {
+                        color : "#00be00",
+                        caption : "5W"
+                    },
+                    
+                };
+            
+        }else{
+            this.cellWeightObject = {
+                R : {
+                    color : "#d22323",
+                    caption : "3W"
+                },
+                P : {
+                    color : "#ffa0a0",
+                    caption : "2W"
+                },
+                B : {
+                    color : "#3264c8",
+                    caption : "3L"
+                },
+                L : {
+                    color : "#a0d3ff",
+                    caption : "2L"
+                },
+                G : {
+                    color : "#C4C400",
+                    caption : "4W"
+                },
+                W : {
+                    color : "",
+                    caption : ""
+                }   
+                
+            };
+        }
+
         var cellDetails = null;
         if (obj != undefined) {
             if (obj.cellWeightString != undefined) {
@@ -5251,7 +5322,7 @@ var TilesLeftPanel = {
     open: function () {
         var moveLetters = BoardModel.getMoveLettersToString() + RackModel.getRackLettersToString();
         var divs = '<div class="tilesLeftPanel"><div class="header"><span>Tiles Left</span><a href="javascript:void(0)">X</a></div><div class="body">';
-        var chkLength = 73;
+        var chkLength = 84;
         if (GameInfoModel.dic == "FR") {
             chkLength = 86;
         } else {
@@ -5263,36 +5334,36 @@ var TilesLeftPanel = {
             divs += '<div class="empty">Not available if there are FEWER than 15 tiles left.</div>';
         } else {
             var list = {
-                A: 8,
+                A: 9,
                 B: 2,
                 C: 2,
-                D: 3,
-                E: 11,
+                D: 4,
+                E: 12,
                 F: 2,
-                G: 2,
+                G: 3,
                 H: 2,
-                I: 8,
+                I: 9,
                 J: 1,
                 K: 1,
-                L: 3,
+                L: 4,
                 M: 2,
-                N: 5,
-                O: 7,
+                N: 6,
+                O: 8,
                 P: 2,
                 Q: 1,
-                R: 5,
-                S: 3,
-                T: 5,
-                U: 3,
+                R: 6,
+                S: 4,
+                T: 6,
+                U: 4,
                 V: 2,
                 W: 2,
                 X: 1,
-                Y: 3,
+                Y: 2,
                 Z: 1,
                 "blank": 2
             };
-            var vowel = "37";
-            var conso = "50";
+            var vowel = "42";
+            var conso = "56";
             if (GameInfoModel.dic == "FR") {
                 list = {
                     A: 9,
@@ -5360,7 +5431,37 @@ var TilesLeftPanel = {
                     conso = "61";
                 }
             }
-            divs += '<div><span style="width:30%;color:#156df2;">' + vowel + ' vowels</span><span style="width:40%;color:#019a34">' + conso + ' consonants</span><span style="width:30%;color:#ce3b09">2 blanks</span></div><ul>';
+
+            if(AppConstants.variables.isCustomBoard){
+                var tilesCountArr = FeedDataModel.tileLeft.split("|");
+                
+                var list = {};
+                var vowel = 0;
+                var conso = 0;
+                var blanks = 0;
+                var vowelArr = ["a","e","i","o","u"];
+                
+
+                for(var key in tilesCountArr){
+                    var data = tilesCountArr[key].split(",");
+                    
+                    if(vowelArr.indexOf(data[0]) !=-1){
+                        list[data[0].toUpperCase()] = parseInt(data[1]);
+                        vowel += parseInt(data[1]);
+                    }else if(data[0]=="blank"){
+                        list[data[0]] = parseInt(data[1]);
+                        blanks += parseInt(data[1]);
+                    }else{
+                        list[data[0].toUpperCase()] = parseInt(data[1]);
+                        conso += parseInt(data[1]);
+                    }
+                    
+                }
+            }else{
+                var blanks = 2;
+            }
+            
+            divs += '<div><span style="width:30%;color:#156df2;">'+vowel+' vowels</span><span style="width:40%;color:#019a34">'+conso+' consonants</span><span style="width:30%;color:#ce3b09">'+blanks+' blanks</span></div><ul>';
             blankCount = 0;
             for (var chr = 65; chr <= 91; chr++) {
                 var count = 0;
@@ -6009,7 +6110,7 @@ var Tutorial = {
 };
 var GameOverPopup = {
     open: function (gameOverList) {
-        var popUp = '<div class="gameOverPopup" id="gameOverPopup">' + '<span class="clear" style="display:block;margin-bottom:12px;">' + '<h2 class="gameOver_popupHeading">Game Over</h2>' + '<a href="javascript:void(0);" title="close" class="closePopup" onclick="GameOverPopup.destroy();"></a>' + "</span>" + '<span style="font-size:14px;color:#333;"><span style="color:#0087f7;font-weight:bold;">You ' + gameOverList.txt + "</span> with a score of <b>" + gameOverList.myScore + " to " + gameOverList.oppScore + "!</b>" + " Would you like to start another game with " + gameOverList.oppName + "?</span>" + '<div class="clear" style="margin:12px 0 14px 0;padding-bottom:16px;border-bottom:1px solid #eaeaea;">' + '<a href="javascript:void(0);" class="grey_button flt_left" style="width:auto;padding:3px 6px;height:22px;line-height:22px;margin-right:8px;" onclick="GameOverPopup.destroy();">No</a>' + '<a href="javascript:void(0);" class="blue_button_new blue_button_new_big flt_left" style="color:#fff;font-weight:bold;padding:3px 6px;height:22px;line-height:22px;" onclick="UIEvent.board.playRematch();return false;">Rematch</a>' + "</div>" + '<span class="clear" style="display:block;margin-bottom:12px;">' + '<h2 class="gameOver_popupHeading">Analyse</h2>' + '<span class="analyzeNew">New!</span>' + "</span>";
+        var popUp = '<div class="gameOverPopup" id="gameOverPopup">' + '<span class="clear" style="display:block;margin-bottom:12px;">' + '<h2 class="gameOver_popupHeading">Game Over</h2>' + '<a href="javascript:void(0);" title="close" class="closePopup" onclick="GameOverPopup.destroy();"></a>' + "</span>" + '<span style="font-size:14px;color:#333;"><span style="color:#0087f7;font-weight:bold;">You ' + gameOverList.txt + "</span> with a score of <b>" + gameOverList.myScore + " to " + gameOverList.oppScore + "!</b>" + " Would you like to start another game with " + gameOverList.oppName + "?</span>" + '<div class="clear" style="margin:12px 0 14px 0;padding-bottom:16px;border-bottom:1px solid #eaeaea;">' + '<a href="javascript:void(0);" class="grey_button flt_left" style="width:auto;padding:3px 6px;height:22px;line-height:22px;margin-right:8px;" onclick="GameOverPopup.destroy();">No</a>' + '<a href="javascript:void(0);" class="blue_button_new blue_button_new_big flt_left" style="color:#fff;font-weight:bold;padding:3px 6px;height:22px;line-height:22px;" onclick="UIEvent.board.playRematch();return false;">Rematch</a>' + "</div>" /*+ '<span class="clear" style="display:block;margin-bottom:12px;">' + '<h2 class="gameOver_popupHeading">Analyse</h2>' + '<span class="analyzeNew">New!</span>' + "</span>"*/;
         popUp = popUp + '<span style="font-size:14px;color:#333;">';
         if (gameOverList.psbMove == undefined) {} else {
             popUp = popUp + "Out of " + gameOverList.psbMove + " best possible moves, you played only " + gameOverList.psbMoveGiven + ".";
