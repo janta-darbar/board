@@ -2309,7 +2309,11 @@ function printOutput($action, $message_check, $final_message)
 	// end of archive logic
 
     //echo $xmlstring . $str . $bingostr . $gamefinishstr;
-	echo json_encode($jsonArr);
+	if($_REQUEST['callback']) {//////#2481
+        echo $_REQUEST['callback']."(".json_encode($jsonArr).")";
+    }else{
+        echo json_encode($jsonArr);
+    }
 
 
 	if($sendfacebook == 'y') {
