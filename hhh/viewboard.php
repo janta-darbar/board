@@ -178,18 +178,21 @@ if($newgame==1) {
             }
         };
     	_JS_loader.add({url:'<?=CDN_URL?>board/js/jquery-ui-1.8.21b.min.js',id:'customJquery',async:true});
-        _JS_loader.add({url:'<?=CDN_URL?>board/js/fbLexulous-1.7.2d-min.js',id:'main',async:true});
+        _JS_loader.add({url:'https://192.168.100.1/public/FACEBOOKALL/Lexulous/board/js/xLexulous-1.7.1.js',id:'main',async:true});
 	
 	</script>
-	<link href="<?=CDN_URL?>css/lightbox.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="<?=CDN_URL?>js/lightbox-2.6.min.js"></script>
-	
+	<link href="https://192.168.100.1/public/MAYUR/FACEBOOK/Lexulous/css/lightbox.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="https://192.168.100.1/public/MAYUR/FACEBOOK/Lexulous/js/lightbox-2.6.min.js"></script>
 	<link href="<?=CDN_URL?>board/style/fbstyle1.7.1f.css" type="text/css" rel="stylesheet" />
 	<div style="margin: 10px 0;">
+	<?php
+			if($_COOKIE['html5board']=='y'){
+
+				?>
 		<div id="elex_gameContainer" style="padding: 0;height: 480px;">
 				<div id="elex_headerPanel"></div>
 			<div id="elex_temp_loader" class="tempActivityLoader">
-				<div>Loading game, please wait...</div>
+				<div>Loading game, Please wait...</div>
 			</div>
 			<div id="elex_bodyPanel">
 				<div id="elex_leftPanel">
@@ -301,15 +304,60 @@ if($newgame==1) {
                 nextGame : "6108034,1,US",
                 analyzeUser : <?=json_encode($analyzeUser)?>,
                 proUser: false,
-                firstTime : "<?=($tot_played<500)?'true':'false'?>",
+		                firstTime : <?=($tot_played<10)?'true':'false'?>,
                 autoTilePlace :false,
                 paymentSuccess : "<?(!$_REQUEST['success']) ? print '2':print $_REQUEST['success']?>",
                 protocol:"<?=$URLPREFIX?>",
                 hideAdvert:"<?=$hide_advert_option?>",
-                boardViewing : false                
+		                boardViewing : false,
+		                pop : pop           
             });
          }
         </script>
+        <?php
+
+			}else{
+				?>
+				<div style="float:left; width: 584px; height: 390px;margin:0 5px 0 0;">
+					<div id="swfContainer"  style="z-index:-1;"></div>
+				</div>
+				<!-- <div class="board" id="swfContainer1"></div> -->
+				<script type="text/javascript">
+  
+					var flashvars = {
+						fb_sig_user:"<?=$user?>",
+						serverIP:"aws.rjs.in",
+						lang:"<?=strtolower($lang)?>",
+						showGameOver:"<?=($_REQUEST['showGameOver']==1)?1:0?>",
+						gid:"<?=$gid?>",
+						pid:"<?=$pid?>",
+						password:"<?=$password?>",
+						facebook:"y",
+						fb_sig_session_key:"<?=urlencode($facebook->getAccessToken());?>",
+						autoRefreshBoard:"<?=$settingCookie[4]?>",
+						numberedboardvar:"<?=$settingCookie[5]?>",
+						chatvar:"<?=$settingCookie[7]?>",
+						autosortvar:"<?=$settingCookie[6]?>"
+					};
+					var params = {wmode: "transparent", allowscriptaccess: "always"};
+					var attributes = {};
+					//swfobject.embedSWF("http://play.paltua.com/facebook/flash/<?=$swf?>", "swfContainer", "584", "376", "9.0.0","", flashvars, params, attributes);
+					swfobject.embedSWF("https://d35zhpgb1mza1j.cloudfront.net/flash/aws/<?=$swf?>", "swfContainer", "584", "376", "9.0.0","", flashvars, params, attributes);
+					
+					var flashvars_g = {
+						data:"<?=urlencode($charturl);?>"
+					};
+					var params_g = {wmode: "opaque", allowscriptaccess: "always"};
+					var attributes_g = {};
+					// swfobject.embedSWF("https://dbyxbgd9ds257.cloudfront.net/flash/open-flash-chart.swf", "swfContainer1", "320", "150", "9.0.0","", flashvars_g, params_g, attributes_g);
+				</script>
+				<?php
+			}
+
+
+
+		?>
+		
          <script type="text/javascript">
     		if(!_JS_loader.isRunning) {
         	_JS_loader.run();

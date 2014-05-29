@@ -651,6 +651,21 @@ function load_settings($uid, $getfromcache = false) {
 		setcookie("app_dateadded",$row['dt'],time()+3600*24*7);
 		$_COOKIE['app_dateadded'] = $row['dt'];
 
+    if($_COOKIE['html5board']){
+      
+    }else{
+      $que = "SELECT newboard FROM settings WHERE user_id='$user'";
+      $qres2 = mysql_query($que);
+        if(mysql_num_rows($qres2)>0){
+          $row123 = mysql_fetch_assoc($qres2);
+          setcookie('html5board',$row123['newboard'],time()+3600*24*7);
+          $_COOKIE['html5board'] = $row123['newboard'];
+        }else{
+          setcookie('html5board','y',time()+3600*24*7);
+          $_COOKIE['html5board'] = 'y';
+        }  
+    }
+
 
 		//$_SESSION['lexCookieList'] = $CookieList;/////added on 10_9_12 #1142(1)
 

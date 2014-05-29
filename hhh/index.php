@@ -397,6 +397,10 @@ if ($new_playerCookie == 'n'){
 	$version="new";
 }
 
+if($action == "changesettings"){
+	$html5boardChangeValue = $_REQUEST['html5board'];
+}
+
 //// set user source from campaign
 //set_user_advt_source($user,$cmp);
 
@@ -701,8 +705,16 @@ switch ($action) {
     
     //setting variables change here 
     case "changesettings":
+
 		$sq="update facebookusers set showprofiles='$profilesRdBttn', defaultdic='$defaultDic', numberedboard='$numberedRdBttn', autoRefreshBoard='$autoRefreshRdBttn', showstatus='$showStatusRdBttn', show_tiles='$showTilesRdBttn', default_newgame='$newgameClick' where uid = '$user'";//#3626
     	mysql_query($sq);
+
+    	$sql = "INSERT INTO `settings`	SET newboard = '$html5boardChangeValue',user_id = '$user',version = 'n' ON DUPLICATE KEY UPDATE newboard = '$html5boardChangeValue'";
+    	mysql_query($sql); 
+
+
+        setcookie('html5board',$html5boardChangeValue,time()+3600*24*7);
+		$_COOKIE['html5board'] = $html5boardChangeValue ;  	
 
         if($showStatusRdBttn == "n") { delMemCache($user);}
         ///#3105
