@@ -510,7 +510,7 @@ function startnewgame($user, $with, $dictionary, $game_type, $opponentname, $mob
 		}
 
         // now insert this user in the stats table
-        mysql_query("UPDATE `users_stats` set played = played + 1 where email = '$email'");
+        mysql_query("UPDATE `users_stats` set played = played + 1 where email = '$email'");              
         if(mysql_affected_rows() <= 0) {
         	mysql_query("INSERT INTO `users_stats` set email = '$email', played = 1");
         }
@@ -2366,51 +2366,51 @@ function get_archive_games_monthwise($user,$month_val,$year_val,$profile=false) 
 }
 
 function total_finishedGamesDetails_monthwise($email_id,$month,$year){
-  
-  $current_month = date("m"); 
-  $current_year = date("y");
+	
+	$current_month = date("m");	
+	$current_year = date("y");
   // if(($current_month == $month) &&($current_year == $year)){      //comment by mayur
-    $gamestable = "games_over";
-    $userstable = "users_over";
+		$gamestable = "games_over";
+		$userstable = "users_over";
   // } else {  //comment by mayur
   //  $gamestable = "games_over_".$month.$year;    //comment by mayur
   //  $userstable = "users_over_".$month.$year;    //comment by mayur
   // }   //comment by mayur
 
 
-  //$gamestable = "games_over".$month.$year;
-  //$userstable = "users_over";
-  
+	//$gamestable = "games_over".$month.$year;
+	//$userstable = "users_over";
+	
   $sql = "SELECT  finishedon, winner, language, player_id, {$gamestable}.game_id, password, game_type  FROM {$userstable}, {$gamestable} WHERE {$userstable}.game_id = {$gamestable}.game_id and {$userstable}.email='$email_id' and `finishedon`>=DATE_SUB(NOW(), INTERVAL 1 MONTH) order by {$gamestable}.startedon desc";
-  //$sql = "SELECT  finishedon, winner, language, player_id, games_over.game_id, password, game_type  FROM users_over, games_over WHERE users_over.game_id = games_over.game_id and users_over.email='$email_id' order by games_over.finishedon desc";
-  $result = mysql_query($sql);
-  $cnt = mysql_num_rows($result);
-  $returnArr = array();
-  if($cnt > 0) {
-    while($row = mysql_fetch_array($result))
-    {
+	//$sql = "SELECT  finishedon, winner, language, player_id, games_over.game_id, password, game_type  FROM users_over, games_over WHERE users_over.game_id = games_over.game_id and users_over.email='$email_id' order by games_over.finishedon desc";
+	$result = mysql_query($sql);
+	$cnt = mysql_num_rows($result);
+	$returnArr = array();
+	if($cnt > 0) {
+		while($row = mysql_fetch_array($result))
+		{
       // echo $row['game_id'] . "<br>";
-      $result1 = generic_mem_cache("pca" . $row['game_id'], 3600, "select id, player_id, nickname, email, password from $userstable where game_id = " . $row['game_id']);
-      $players_details = array();
-      foreach ($result1 as $id=> $playrow)
-      {     
-        //print_r ($playrow);print"<br>";       
-        if($row['winner'] == $playrow['player_id']) {
-          if($playrow['email'] == $email_id)          
-            $winner_id = $email_id;
-          else
-            $winner_id = $playrow['email'];
-        } else if($row['winner'] == -1) {
-            //$wonby = "<b>Game Drawn</b>";
-            $winner_id = -1;
-        }
-                
-        $players_details[] = $playrow['email'].','.$playrow['nickname'].','.$playrow['password'];
-                                          
-      }
-      $players_details_str = implode($players_details,"|");   
-      $returnArr[] = array('gid'=>$row['game_id'],'winuid'=>$winner_id,'players'=>$players_details_str,'date'=>strtotime($row['finishedon']),'startedon'=>strtotime($row['startedon']),'gtype'=>$row['game_type'],'lang'=>$row['language']);                
-    }
+			$result1 = generic_mem_cache("pca" . $row['game_id'], 3600, "select id, player_id, nickname, email, password from $userstable where game_id = " . $row['game_id']);
+			$players_details = array();
+			foreach ($result1 as $id=> $playrow)
+			{			
+				//print_r ($playrow);print"<br>";				
+				if($row['winner'] == $playrow['player_id']) {
+					if($playrow['email'] == $email_id)					
+						$winner_id = $email_id;
+					else
+						$winner_id = $playrow['email'];
+				} else if($row['winner'] == -1) {
+						//$wonby = "<b>Game Drawn</b>";
+						$winner_id = -1;
+				}
+								
+				$players_details[] = $playrow['email'].','.$playrow['nickname'].','.$playrow['password'];
+																					
+			}
+			$players_details_str = implode($players_details,"|");		
+			$returnArr[] = array('gid'=>$row['game_id'],'winuid'=>$winner_id,'players'=>$players_details_str,'date'=>strtotime($row['finishedon']),'startedon'=>strtotime($row['startedon']),'gtype'=>$row['game_type'],'lang'=>$row['language']);								
+		}
 
     $previous_month = date("m",strtotime("-1 month"));
 
@@ -2451,8 +2451,8 @@ function total_finishedGamesDetails_monthwise($email_id,$month,$year){
 
     }
     // echo json_encode($returnArr);exit;
-    return $returnArr;
-  }
+		return $returnArr;
+	}
 }
 
 //-----added on 3_8_12--End----

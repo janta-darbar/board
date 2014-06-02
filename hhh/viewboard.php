@@ -1,4 +1,4 @@
-<div class="body_container">
+<div class="body_container">	
 <?
 	if ($_REQUEST['prev'] == 1){
 		echo "<div class=\"yellow_box\"><span class=\"yellow_box_left\"></span><div class=\"yellow_box_mid\"><span class=\"text_grey_14\">This game board is over 4 months old. We store boards for the past 3 months only.</span></div><span class=\"yellow_box_right\"></span><div style=\"clear:both;\"></div></div><br /><br />";
@@ -39,7 +39,7 @@ if($newgame==1) {
 		}  
 		$withFrnd= substr($withFrnd, 1);
 		$uidlst= substr($uidlst, 1);
-		if((count($friendsId)>0) & (!isset($_REQUEST['notification'])) ){
+		if( (count($friendsId)>0) & (!isset($_REQUEST['notification'])) ){
 			$message = "Let $withFrnd know you've started a game";
     		echo "<div class=\"yellow_box\"><span class=\"yellow_box_left\"></span><div class=\"yellow_box_mid\"><span class=\"text_grey_14\"><a href=\"#\" class=\"text_blue_12\" onclick=\"showNewGamePublish_new('$user','$uidlst');\">$message</a></span></div><span class=\"yellow_box_right\"></span><div style=\"clear:both;\"></div></div>";
 		}
@@ -52,7 +52,7 @@ if($newgame==1) {
 		<!--#3175-->
 		<?if($hide_advert_option=='n'){?>
 			<div style="width:300px;float: left;margin-top: 4px;">
-				
+
 				<script type='text/javascript'>
 				<!--//<![CDATA[
 				   document.MAX_ct0 ='';
@@ -129,7 +129,7 @@ if($newgame==1) {
 	<?}	
 	?>
 
-	<div id="headToHeadId"></div>	
+		<div id="headToHeadId"></div>	
 	<script type="text/javascript">
     var _JS_loader = {
             count : 0,
@@ -288,32 +288,32 @@ if($newgame==1) {
 	            </div>
         	</div>
 		</div>
-		<script type="text/javascript">
-		function commonOnLoad() {
-            AppController.init({
-                gid : "<?=$gid?>",
-                pid : "<?=$pid?>",
-                password : "<?=$password?>",
-                authuser : "<?=$user?>",
-                authsecret:"<?=$USER_TOKEN?>",
-                sitecode : 1,
-                msgSize:"<?=$settingCookie[7]?>",		
-                askBeforePlay:"n", 
-                showNumberBoard : "<?=($settingCookie[5]=='y')?true:false?>",
-                showGameOver : "<?=($_REQUEST['showGameOver']==1)?1:0?>",
-                nextGame : "6108034,1,US",
-                analyzeUser : <?=json_encode($analyzeUser)?>,
-                proUser: false,
+				<script type="text/javascript">
+				function commonOnLoad() {
+		            AppController.init({
+		                gid : "<?=$gid?>",
+		                pid : "<?=$pid?>",
+		                password : "<?=$password?>",
+		                authuser : "<?=$user?>",
+		                authsecret:"<?=$USER_TOKEN?>",
+		                sitecode : 1,
+		                msgSize:"<?=$settingCookie[7]?>",		
+		                askBeforePlay:"n", 
+		                showNumberBoard : "<?=($settingCookie[5]=='y')?true:false?>",
+		                showGameOver : "<?=($_REQUEST['showGameOver']==1)?1:0?>",
+		                nextGame : "6108034,1,US",
+		                analyzeUser : <?=json_encode($analyzeUser)?>,
+		                proUser: false,
 		                firstTime : <?=($tot_played<10)?'true':'false'?>,
-                autoTilePlace :false,
-                paymentSuccess : "<?(!$_REQUEST['success']) ? print '2':print $_REQUEST['success']?>",
-                protocol:"<?=$URLPREFIX?>",
-                hideAdvert:"<?=$hide_advert_option?>",
+		                autoTilePlace :false,
+		                paymentSuccess : "<?(!$_REQUEST['success']) ? print '2':print $_REQUEST['success']?>",
+		                protocol:"<?=$URLPREFIX?>",
+		                hideAdvert:"<?=$hide_advert_option?>",
 		                boardViewing : false,
 		                pop : pop           
-            });
-         }
-        </script>
+		            });
+		         }
+		        </script>
         <?php
 
 			}else{
@@ -422,7 +422,7 @@ if($newgame==1) {
 		<div style="float:right;"><!--#3248-->
 			<span> 
 		<? if ($hide_advert_option=='n'){?>
-		
+
 			<script type='text/javascript'>
 			<!--//<![CDATA[
 			   document.MAX_ct0 ='';
@@ -442,7 +442,7 @@ if($newgame==1) {
 			   if (document.mmm_fo) document.write ("&amp;mmm_fo=1");
 			   document.write ("'></scr"+"ipt>");
 			//]]>--></script>
-			
+
 			<br /><a href="<?=FB_APP_PATH?>?action=upgrade" target="_top" style="line-height:14px;font-size:11px;float:right;">Hide this ad</a>
 			<div style="clear:both;"></div>
 		<? } ?>
@@ -677,22 +677,22 @@ var head2headStat = {
   ?>
   
 <script>
-function notification_disabled(user,notification){
-	$.ajax({
-		type: "POST",	
-	    url: "ajax/notification_disabled_ajax.php?fbuserid="+user+"&notification="+notification,
-	    success: function (result){
-			if(notification=='y'){
-				var html = "<p>System notifications have been disabled. To enable, please click ";
-				html += "<a href='javascript:void(0);' onclick='javascript:notification_disabled(<?=$user?>,\"n\");'> HERE </a>";
-				html += ".</p>";
-				$("#notif_row").html(html);
-			}else if(notification=='n'){
-				$("#notif_row").html("<p>System notifications have been enabled.</p>");
-			}
-		    
-//		    	$("#notification").hide();    	
-	    }
-	});
-}
+	function notification_disabled(user,notification){
+		$.ajax({
+			type: "POST",	
+		    url: "ajax/notification_disabled_ajax.php?fbuserid="+user+"&notification="+notification,
+		    success: function (result){
+				if(notification=='y'){
+					var html = "<p>System notifications have been disabled. To enable, please click ";
+					html += "<a href='javascript:void(0);' onclick='javascript:notification_disabled(<?=$user?>,\"n\");'> HERE </a>";
+					html += ".</p>";
+					$("#notif_row").html(html);
+				}else if(notification=='n'){
+					$("#notif_row").html("<p>System notifications have been enabled.</p>");
+				}
+			    
+// 		    	$("#notification").hide();    	
+		    }
+		});
+	}
 </script>

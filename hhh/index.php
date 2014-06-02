@@ -1060,8 +1060,8 @@ switch ($action) {
         include_once("$version" . "action/solitaire.php");
         break;
 
-    case "viewboard":
-        include_once("$version" . "action/viewboard" . strtoupper($fb_force_mode) . ".php");
+    case "viewboard":    
+        include_once("$version" . "action/viewboard" . strtoupper($fb_force_mode) . ".php");       
         break;
 
     case "previousgame":
