@@ -22,10 +22,13 @@ class FileIOModel {
 			case "game":
 				$pDate = date_parse($date);
 				$mth = strlen($pDate['month'])==2?$pDate['month']:"0".$pDate['month'];
-				$this->table = 'LexulousAsyncGame' . $mth . substr($pDate['year'],2);				
+				$this->table = 'LexulousAsyncGame0414'; //. $mth . substr($pDate['year'],2);				
 				break;
 			case "note":
 				$this->table = 'LexulousAsyncNote';
+				break;
+			case "userstats":
+				$this->table = "LexulousComStats";
 				break;
 		}
 
@@ -68,7 +71,11 @@ class FileIOModel {
 					case "note":
 						$arr[] = (string) $response->body->Item->data->{AmazonDynamoDB::TYPE_STRING};
 						break;
+					case "userstats":
+						$arr[] = trim((string) $response->body->Item->data->{AmazonDynamoDB::TYPE_STRING});
+						break;
 				}
+
 				return $arr;
 			} else {
 				$exception = $response->body->to_array()->getArrayCopy();
@@ -78,7 +85,7 @@ class FileIOModel {
 				} else if($response->status == "400") {
 					$this->currentRetry = 0;
 					return array();
-				} 
+				}
 			}
 			
 			if($retry) {
@@ -119,6 +126,12 @@ class FileIOModel {
 					'data' => array(AmazonDynamoDB::TYPE_STRING => $str)
 					);
 					break;
+				case "userstats":
+					$item = array(
+					'id' => array(AmazonDynamoDB::TYPE_STRING => $this->id),
+					'data' => array(AmazonDynamoDB::TYPE_STRING => $str)
+					);
+					break;
 			}
 			$this->dyDB->batch($queue)->put_item(array(
 					'TableName' => $this->table,
@@ -126,14 +139,15 @@ class FileIOModel {
 			));
 	
 			$response = $this->dyDB->batch($queue)->send();
-			
+
 			$resp_arr = $response->getArrayCopy();
 			$exception = $resp_arr[0]->body->to_array()->getArrayCopy();
-
+			$exception = explode("#", $exception[__type]);
 			if($resp_arr[0]->status == "500" || $exception[1] == 'ProvisionedThroughputExceededException') {
 				$retry = true;
 			} else if($resp_arr[0]->status == "400") {
-				$retry = true;
+				$this->currentRetry = 0;
+				return;
 			}
 			
 			if($retry) {
@@ -175,10 +189,12 @@ class FileIOModel {
 			$response = $this->dyDB->batch($queue)->send();
 			$resp_arr = $response->getArrayCopy();
 			$exception = $resp_arr[0]->body->to_array()->getArrayCopy();
+			$exception = explode("#", $exception[__type]);
 			if($resp_arr[0]->status == "500" || $exception[1] == 'ProvisionedThroughputExceededException') {
 				$retry = true;
 			} else if($resp_arr[0]->status == "400") {
-				$retry = true;
+				$this->currentRetry = 0;
+				return;
 			}
 				
 			if($retry) {
@@ -192,6 +208,65 @@ class FileIOModel {
 		if($this->currentRetry>0) {
 			$this->currentRetry = 0;
 			$data = array(" "," ");
+			$this->recover("WRITE",$data);
+		}
+	}
+
+	public function getBatchFiles($idDates , $attrib = '') {
+
+		if($this->dyDB == null)
+			$this->dyDB = new AmazonDynamoDB();
+		
+		do {
+			$retry = false;
+
+			$dataToReturn = array();
+			$rng=100;
+			for($i=0;$i<count($idDates)/$rng;$i++){
+				$filesToGet = array();
+				$output = array_slice($idDates, $i*$rng, $rng);
+				foreach($output as $key=>$value) {
+					if(!is_array($filesToGet[$this->table]['Keys'])) {
+						$filesToGet[$this->table]['Keys'] = array();
+					}
+					$filesToGet[$this->table]['Keys'][] = array(
+		                'HashKeyElement'  => array(AmazonDynamoDB :: TYPE_STRING => $value)
+		            );
+					$filesToGet[$this->table]['ConsistentRead'] = 'true';
+					if($attrib)
+						$filesToGet[$this->table]['AttributesToGet'] = $attrib;
+				}
+
+				$response = $this->dyDB->batch_get_item(array(
+				    'RequestItems' => $filesToGet
+				));
+				
+				foreach ($response->body->Responses->{$this->table}->Items as $item)
+				{
+					if($item->{'id'})
+						$id = (string) $item->{'id'}->{AmazonDynamoDB::TYPE_STRING};
+						if($item->{'data'})
+							$dataToReturn[$id] = trim((string) $item->{'data'}-> {AmazonDynamoDB :: TYPE_STRING });
+				}
+			}
+
+			return $dataToReturn;
+
+			if($retry) {
+				$micro_seconds = ((pow(2,$this->currentRetry)*50)*1000);
+				usleep($micro_seconds);
+				$this->currentRetry += 1;
+			}
+		}while($retry && $this->currentRetry<3);
+		
+		if($this->currentRetry>0) {
+			$this->currentRetry = 0;
+			if($this->type == "game") {
+				$sp = explode("\r\n",$str);
+				$data = array($sp[0],$sp[1]);
+			} else {
+				$data = array($str);
+			}
 			$this->recover("WRITE",$data);
 		}
 	}

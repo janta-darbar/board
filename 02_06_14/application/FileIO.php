@@ -25,6 +25,9 @@ class Application_Model_FileIO {
             case "note":
                 $this->table = 'LexulousAsyncNote';
                 break;
+            case 'userstats':
+                $this->table = "LexulousComStats";
+                break;
         }
         
     }
@@ -84,6 +87,9 @@ class Application_Model_FileIO {
                 case "note":
                     $arr[] = (string) $response->body->Item->data->{AmazonDynamoDB::TYPE_STRING};
                     break;
+                case "userstats":
+                        $arr[] = trim((string) $response->body->Item->data->{AmazonDynamoDB::TYPE_STRING});
+                        break;
             }
             return $arr;
         } else {
@@ -143,6 +149,12 @@ class Application_Model_FileIO {
                     'data' => array(AmazonDynamoDB::TYPE_STRING => $str)
                 );
                 break;
+            case "userstats":
+                    $item = array(
+                    'id' => array(AmazonDynamoDB::TYPE_STRING => $this->id),
+                    'data' => array(AmazonDynamoDB::TYPE_STRING => $str)
+                    );
+                    break;
         }
         $this->dyDB->batch($queue)->put_item(array(
             'TableName' => $this->table,
@@ -234,6 +246,66 @@ class Application_Model_FileIO {
             )
                 ));
 	}
+
+    public function getBatchFiles($idDates , $attrib = '') {
+
+        if($this->dyDB == null)
+            $this->dyDB = new AmazonDynamoDB();
+        
+        do {
+            $retry = false;
+
+            $dataToReturn = array();
+            $rng=100;
+            for($i=0;$i<count($idDates)/$rng;$i++){
+                $filesToGet = array();
+                $output = array_slice($idDates, $i*$rng, $rng);
+                foreach($output as $key=>$value) {
+                    if(!is_array($filesToGet[$this->table]['Keys'])) {
+                        $filesToGet[$this->table]['Keys'] = array();
+                    }
+                    $filesToGet[$this->table]['Keys'][] = array(
+                        'HashKeyElement'  => array(AmazonDynamoDB :: TYPE_STRING => $value)
+                    );
+                    $filesToGet[$this->table]['ConsistentRead'] = 'true';
+                    if($attrib)
+                        $filesToGet[$this->table]['AttributesToGet'] = $attrib;
+                }
+
+                $response = $this->dyDB->batch_get_item(array(
+                    'RequestItems' => $filesToGet
+                ));
+
+                    foreach ($response->body->Responses->{$this->table}->Items as $item)
+                    {
+                        if($item->{'id'})
+                            $id = (string) $item->{'id'}->{AmazonDynamoDB::TYPE_STRING};
+                            if($item->{'data'})
+                                $dataToReturn[$id] = trim((string) $item->{'data'}-> {AmazonDynamoDB :: TYPE_STRING });
+                    }
+            }
+
+            return $dataToReturn;
+
+            if($retry) {
+                $micro_seconds = ((pow(2,$this->currentRetry)*50)*1000);
+                usleep($micro_seconds);
+                $this->currentRetry += 1;
+            }
+        }while($retry && $this->currentRetry<3);
+        
+        if($this->currentRetry>0) {
+            $this->currentRetry = 0;
+            if($this->type == "game") {
+                $sp = explode("\r\n",$str);
+                $data = array($sp[0],$sp[1]);
+            } else {
+                $data = array($str);
+            }
+            $this->recover("WRITE",$data);
+        }
+    }
+    
     private function recover($log_type,$game_data = "") {
     	//insert in log table
     	$log = new Application_Model_LogData();

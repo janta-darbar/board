@@ -34,16 +34,19 @@ class Application_Model_UsersStatsData
 		//$record = $this->db->selectRecord("email = '$userid'");
 		$record = $this->db->selectRecord("userid = '$userid'");
 		$this->db->updateRecord($userid, array("won"=>$record['won']+1));
+		$this->updateUserStatsDynamoDbConditional($userid,"setWon");//mayur
 	}
 	
 	public function setLost($userid) {
 		//$this->db->executeQuery("UPDATE users_stats SET lost = lost + 1 WHERE email = '$userid'");
 		$this->db->executeQuery("UPDATE all_users_stats SET lost = lost + 1 WHERE userid = '$userid'");
+		$this->updateUserStatsDynamoDbConditional($userid,"setLost");//mayur
 	}
 	
 	public function removePlayed($userid) {
 		//$this->db->executeQuery("UPDATE users_stats SET played = played - 1 WHERE email = '$userid'");
 		$this->db->executeQuery("UPDATE all_users_stats SET played = played - 1 WHERE userid = '$userid'");
+		$this->updateUserStatsDynamoDbConditional($userid,"removePlayed");//mayur
 	}
 	
 	public function updatePlayerRatings($pid,$winnerpid,$userinfo,$moveinfo,$usersdetails,$newScore) {
@@ -158,7 +161,7 @@ class Application_Model_UsersStatsData
 			}
 		}
 		
-		foreach($ratingsdata as $uid=>$data) { $this->db->updateRecord($uid,$data); }
+		foreach($ratingsdata as $uid=>$data) { $this->db->updateRecord($uid,$data); $this->updateUserStatsDynamoDb($uid,$data); }
 	}
 	
 	private function calculateRating($S1,$S2,$R1,$R2) {
@@ -193,18 +196,85 @@ class Application_Model_UsersStatsData
 			//$affected_rows = $this->db->executeQuery("UPDATE users_stats SET played = played + 1 WHERE email = '$user'");
 			$affected_rows = $this->db->executeQuery("UPDATE all_users_stats SET played = played + 1 WHERE userid = '$user'");
 			//if($affected_rows != 1) { $this->db->insertRecord(array("email"=>$user,"played"=>1)); }
-			if($affected_rows != 1) { $this->db->insertRecord(array("userid"=>$user,"played"=>1)); }
+			$bestRatingDate = date("Y-m-d", time());
+			if($affected_rows != 1) { $this->db->insertRecord(array("userid"=>$user,"played"=>1,"bestrating_date"=>$bestRatingDate));
+				$this->updateUserStatsDynamoDbConditional($user,"newRow",array("bestrating_date"=>$bestRatingDate));//mayur
+			}else{
+				$this->updateUserStatsDynamoDbConditional($user,"addGameToStats");//mayur
+			}
 		}
 	}
 	
 	public function removeGameFromStats($userlist) {
 		//$this->db->executeQuery("UPDATE users_stats SET played = played + 1 WHERE email IN (".implode(",",$userlist) .")");
 		$this->db->executeQuery("UPDATE all_users_stats SET played = played + 1 WHERE userid IN (".implode(",",$userlist) .")");
+		$this->updateUserStatsDynamoDbConditional($userlist,"removeGameFromStats");//mayur
 	}
 	
 	public function tempUserUpdate($tempuid,$newuid) {
 		//$sql = "update users_stats set email = '$newuid' where email = '$tempuid'";
 		$sql = "update all_users_stats set userid = '$newuid' where userid = '$tempuid'";
 		$this->db->getAdapter()->query($sql);
+		$this->updateUserStatsDynamoDbConditional($tempuid,"tempUserUpdate",array("newuid"=>$newuid));//mayur
+	}
+
+	public function updateUserStatsDynamoDb($uid,$data){
+		$fileio = new FileIOModel($uid, "userstats");
+		$fileio->writeFile(json_encode($data));
+	}
+
+	public function getUserStatsDynamoDb($uid){
+		$fileio = new FileIOModel($uid,"userstats");
+		if(count($uid)>1){
+			$datat = $fileio->getBatchFiles($uid);
+		}else{
+			$datat = $fileio->getFile();
+		}
+
+		return $datat;		
+	}
+
+	public function updateUserStatsDynamoDbConditional($userid,$action,$extra=null){
+		$data = array();
+		if($action == "newRow"){
+			$data = array("drawn"=>0,"rating"=>1200,"userid"=>$userid,"bestrating"=>1200,"played"=>1,"won"=>0,"lost"=>0,"avg_move_score"=>0,"total_moves"=>0,"avg_game_score"=>0,"total_games"=>0,"streak"=>0,"beststreak"=>0,"bestrating_date"=>$extra['bestrating_date'],"bestscore"=>0,"longeststreakdate"=>"0000-00-00","aborted"=>0,"lastplayed"=>"0000-00-00 00:00:00","totalscore"=>0);
+			$fileio = new FileIOModel($userid,"userstats");
+			$fileio->writeFile(json_encode($data));	
+		}else{
+			$dynamoData = $this->getUserStatsDynamoDb($userid);
+			foreach ($dynamoData as $key => $value) {
+				$data = json_decode($value,true);
+				$uid = $data['userid'];
+				switch ($action) {
+					case 'SetWon':
+						$data['won'] = intval($data['won'])+1;
+						break;
+
+					case 'setLost':
+						$data['lost'] = intval($data['lost'])+1;
+						break;
+
+					case 'removePlayed':
+						$data['played'] = intval($data['played'])-1;
+						break;
+
+					case 'addGameToStats':
+						$data['played'] = intval($data['played'])+1;
+						break;
+
+					case 'removeGameFromStats':
+						$data['played'] = intval($data['played'])+1;
+						break;
+
+					case 'tempUserUpdate':					
+						$data['userid'] = $extra['newuid'];
+						break;
+				}
+
+				$fileio = new FileIOModel($uid, "userstats");
+				$fileio->writeFile(json_encode($data));			
+			}
+		}
+
 	}
 }

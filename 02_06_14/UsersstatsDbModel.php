@@ -10,11 +10,11 @@ class UsersstatsDbModel{
 	public function insertRecord($data) {
 	        $game_data="";
 		foreach($data as $key=>$valu){
-			if ($key == "bestrating_date") {
-				$game_data.="$key=$valu,";
-			}else{
+			// if ($key == "bestrating_date") {
+			// 	$game_data.="$key=$valu,";
+			// }else{
 				$game_data.="$key='$valu',";
-			}	
+			// }	
 		}
 		$usergame_data=trim($game_data,",");
 		$sql = "INSERT INTO {$this->_name} set $usergame_data";
